@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-d
 
 import UserKYC from "./UserKYC";
 import AdminDashboard from "./AdminDashboard";
+import { API_BASE as API_BASE_URL } from "./apiBase.js";
 
 const UserKYCWrapper = ({ apiBaseUrl, onNavigate }) => {
   const [activePhase, setActivePhase] = useState('A');
@@ -36,8 +37,6 @@ const UserKYCWrapper = ({ apiBaseUrl, onNavigate }) => {
 };
 
 function App() {
-  const API_BASE_URL = 'https://coinora.in'; 
-
   return (
     <HashRouter>
       <Routes>
