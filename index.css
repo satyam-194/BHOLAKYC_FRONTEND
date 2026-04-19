@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  min-height: 100dvh;
+  min-height: 100svh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#root {
+  min-height: 0;
+  min-height: 100dvh;
+}
+
+/* KYC steps A/B/C: one viewport column; scroll + scrollbar on the phase panel */
+.kyc-phase-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  height: 100svh;
+  max-height: 100dvh;
+  max-height: 100svh;
+  overflow: hidden;
+  background: #f0f2f7;
+}
+.kyc-phase-motion {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.kyc-phase-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+.kyc-phase-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.kyc-phase-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+.kyc-phase-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+  border: 2px solid #f1f5f9;
+}
+.kyc-phase-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Shared toast (Phase B / C / UserKYC) */
+.kyc-toast-banner {
+  position: fixed;
+  z-index: 10050;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(calc(100vw - 24px), 420px);
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+  animation: kyc-toast-in 0.28s ease;
+  pointer-events: none;
+}
+.kyc-toast-banner--success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.kyc-toast-banner--error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.kyc-toast-banner--warning {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.kyc-toast-banner--info {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+}
+@keyframes kyc-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@media (min-width: 640px) {
+  .kyc-toast-banner {
+    left: auto;
+    right: 20px;
+    bottom: 24px;
+    transform: none;
+    animation: kyc-toast-in-desktop 0.28s ease;
+  }
+  @keyframes kyc-toast-in-desktop {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
