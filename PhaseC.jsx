@@ -268,12 +268,6 @@ const CSS = `
 }
 .pc-start-btn:hover:not(:disabled){background:#1d4ed8}
 
-.pc-stop-btn{
-  background:#ef4444;
-  box-shadow:0 8px 20px rgba(239,68,68,0.26);
-}
-.pc-stop-btn:hover:not(:disabled){background:#dc2626}
-
 .pc-cancel-btn{
   background:transparent; color:#64748b; border: 1.5px solid #e2e8f0;
   box-shadow:none;
@@ -971,19 +965,9 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
           )}
 
           {phase === 'recording' && (
-            <>
-              <button
-                type="button"
-                className={`pc-btn-base ${isScrollComplete ? 'pc-submit-btn' : 'pc-stop-btn'}`}
-                onClick={stopRecording}
-              >
-                {isScrollComplete ? 'Continue to submit KYC' : 'Stop recording'}
-                {isScrollComplete ? <span className="pc-btn-arr"><ArrowRight /></span> : null}
-              </button>
-              <button type="button" className="pc-btn-base pc-cancel-btn" onClick={cancelRecording}>
-                Cancel
-              </button>
-            </>
+            <button type="button" className="pc-btn-base pc-cancel-btn" onClick={cancelRecording}>
+              Cancel
+            </button>
           )}
 
           {phase === 'review' && (

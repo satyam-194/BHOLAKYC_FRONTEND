@@ -354,7 +354,7 @@ const AwaitingApprovalScreen = ({ refId, resumeRefId, setResumeRefId, resumeMobi
   </div>
 );
 
-const SuccessScreen = ({ refId, apiBaseUrl, pdfPath, indemnityPdfPath }) => (
+const SuccessScreen = ({ refId }) => (
   <div className="kyc-overlay-root">
     <style>{STYLES}</style>
     <KYCHeader />
@@ -385,33 +385,6 @@ const SuccessScreen = ({ refId, apiBaseUrl, pdfPath, indemnityPdfPath }) => (
           Transaction Reference
           <span>{refId || '—'}</span>
         </div>
-
-        {(pdfPath || indemnityPdfPath) && apiBaseUrl && (
-          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
-            {pdfPath && (
-              <a
-                href={`${apiBaseUrl}/storage/${pdfPath}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="kyc-btn-ghost"
-                style={{ fontWeight: 600, color: '#2563eb' }}
-              >
-                View KYC summary PDF
-              </a>
-            )}
-            {indemnityPdfPath && (
-              <a
-                href={`${apiBaseUrl}/storage/${indemnityPdfPath}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="kyc-btn-ghost"
-                style={{ fontWeight: 600, color: '#2563eb' }}
-              >
-                View indemnity bond PDF
-              </a>
-            )}
-          </div>
-        )}
 
         <button className="kyc-btn-primary" style={{ marginTop: 24 }} onClick={() => window.location.reload()}>
           Submit Another Application
@@ -714,12 +687,7 @@ const UserKYC = ({ apiBaseUrl, onNavigate }) => {
   );
   if (currentStep === 4) {
     return (
-      <SuccessScreen
-        refId={userData.refId}
-        apiBaseUrl={apiBaseUrl}
-        pdfPath={userData.pdf_path}
-        indemnityPdfPath={userData.indemnity_pdf_path}
-      />
+      <SuccessScreen refId={userData.refId} />
     );
   }
 

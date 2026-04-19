@@ -439,8 +439,6 @@ const PhaseB = ({ userId, fullname, mobile, proofStatus, phaseAccess, apiBaseUrl
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [pdfPath, setPdfPath] = useState(null);
-  const [indemnityPdfPath, setIndemnityPdfPath] = useState(null);
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -686,8 +684,6 @@ const PhaseB = ({ userId, fullname, mobile, proofStatus, phaseAccess, apiBaseUrl
 
       showToast('Documents uploaded successfully. Continue to the next step.', 'success', 3200);
       setIsSuccess(true);
-      setPdfPath(result.pdf_path);
-      setIndemnityPdfPath(result.indemnity_pdf_path || null);
 
       localStorage.removeItem(CACHE_KEY_B);
 
@@ -739,27 +735,6 @@ const PhaseB = ({ userId, fullname, mobile, proofStatus, phaseAccess, apiBaseUrl
                   Your KYC documents and UTR have been submitted successfully. 
                   Our team will review your application shortly.
                 </p>
-                {pdfPath && (
-                  <a 
-                    href={`${apiBaseUrl}/storage/${pdfPath}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="pb-link-btn"
-                  >
-                    View Generated KYC PDF
-                  </a>
-                )}
-                {indemnityPdfPath && (
-                  <a
-                    href={`${apiBaseUrl}/storage/${indemnityPdfPath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pb-link-btn"
-                    style={{ marginTop: pdfPath ? 12 : 0, display: 'block' }}
-                  >
-                    View Indemnity Bond PDF
-                  </a>
-                )}
               </div>
             </div>
           </div>
