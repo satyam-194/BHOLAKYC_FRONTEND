@@ -36,7 +36,7 @@ const UserKYCWrapper = ({ apiBaseUrl, onNavigate }) => {
 };
 
 function App() {
-  const API_BASE_URL = 'https://www.coinora.in'; 
+  const API_BASE_URL = 'https://coinora.in'; 
 
   return (
     <HashRouter>

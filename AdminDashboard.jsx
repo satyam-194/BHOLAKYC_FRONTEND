@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import axios from "axios";
 
-const API_BASE = "https://www.coinora.in";
+const API_BASE = "https://coinora.in";
 const SESSION_KEY = "ad_tok";
 const SESSION_SIG = "ad_sig";
 const SESSION_EXP = "ad_exp";
