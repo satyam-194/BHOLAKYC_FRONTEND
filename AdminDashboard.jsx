@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import axios from "axios";
-import { API_BASE } from "./apiBase.js";
+import { API_BASE, STORAGE_BASE } from "./apiBase.js";
 const SESSION_KEY = "ad_tok";
 const SESSION_SIG = "ad_sig";
 const SESSION_EXP = "ad_exp";
@@ -108,18 +108,18 @@ authClient.interceptors.response.use(
 
 function mediaUrl(path) {
   if (path == null || path === "") return "";
-  let p = String(path).trim();
-  if (/^https?:\/\//i.test(p)) return p;
-  p = p.replace(/\\/g, "/");
+  let p = String(path).trim().replace(/\\/g, "/");
   const absStorage = p.search(/[/]storage[/]/i);
   if (absStorage >= 0) {
     p = p.slice(absStorage + "/storage/".length).replace(/^\/+/, "");
-  } else {
+  } else if (!/^https?:\/\//i.test(p)) {
     p = p.replace(/^\/+/, "");
+  } else {
+    return p;
   }
   if (!p) return "";
-  if (p.startsWith("storage/")) return `${API_BASE}/${p}`;
-  return `${API_BASE}/storage/${p}`;
+  if (p.startsWith("storage/")) return `${STORAGE_BASE}/${p}`;
+  return `${STORAGE_BASE}/storage/${p}`;
 }
 
 function fileExtensionFromPath(p) {

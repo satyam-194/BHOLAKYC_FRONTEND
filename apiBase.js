@@ -12,4 +12,17 @@ export function getApiBase() {
   return 'https://coinora.in';
 }
 
+/**
+ * Public files under /storage/ (images, PDFs, videos) are always served from the
+ * canonical app host. Using this avoids broken previews when the SPA is opened on
+ * www vs apex or another subdomain. Set VITE_STORAGE_BASE_URL to override.
+ */
+export function getStorageBase() {
+  const fromEnv = import.meta.env.VITE_STORAGE_BASE_URL?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, '');
+  if (import.meta.env.DEV) return getApiBase();
+  return 'https://coinora.in';
+}
+
 export const API_BASE = getApiBase();
+export const STORAGE_BASE = getStorageBase();

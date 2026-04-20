@@ -253,7 +253,20 @@ const PhaseA = ({ apiBaseUrl, onNext, onContinueKyc, onBack }) => {
         body: submitData,
       });
 
-      const result = await response.json();
+      let result = {};
+      const ct = response.headers.get('content-type') || '';
+      if (ct.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        const hint =
+          response.status === 404
+            ? 'API not found (404). On production, forward /api to your Node server (same fix as admin login).'
+            : text?.trim().startsWith('<')
+              ? `Server returned a web page instead of JSON (${response.status}). /api is probably not reaching Express.`
+              : (text?.slice(0, 200) || `Server error (${response.status})`);
+        throw new Error(hint);
+      }
 
       if (!response.ok) {
         throw new Error(result.error || 'Submission failed');
