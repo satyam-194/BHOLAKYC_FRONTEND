@@ -360,7 +360,7 @@ body { font-family: var(--font); background: #f1f5f9; -webkit-font-smoothing: an
   font-size: 12px; color: #94a3b8;
 }
 
-.d-root { min-height: 100vh; background: #f1f5f9; font-family: var(--font); min-height: 100dvh; }
+.d-root { background: #f1f5f9; font-family: var(--font); min-height: 100dvh; display: flex; flex-direction: row; }
 
 .d-session-bar {
   background: var(--amber-bg); border-bottom: 1px solid #fde68a;
@@ -427,31 +427,134 @@ body { font-family: var(--font); background: #f1f5f9; -webkit-font-smoothing: an
 .hbtn.primary:hover { background: var(--blue-dk); }
 .hbtn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.d-tabbar {
-  display: flex; gap: 4px; padding: 0 16px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
+.d-main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 100dvh; }
+
+.d-nav-sidebar {
+  width: 240px; flex-shrink: 0; background: #0a0a0a;
+  display: flex; flex-direction: column;
+  min-height: 100dvh; position: sticky; top: 0; height: 100dvh;
+  overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.06);
+}
+.d-nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 22px 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: 15px; font-weight: 800; color: #fff; letter-spacing: -0.02em;
   flex-shrink: 0;
 }
-.d-tab {
-  padding: 12px 16px; border: none; background: transparent;
-  font-family: var(--font); font-size: 13px; font-weight: 600;
-  color: var(--gray); cursor: pointer;
-  border-bottom: 2px solid transparent; margin-bottom: -1px;
+.d-nav-brand-dot {
+  width: 36px; height: 36px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.45);
 }
-.d-tab:hover { color: var(--slate); }
-.d-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.d-nav-accent { color: #60a5fa; }
+.d-nav-section { padding: 16px 14px 6px; font-size: 9.5px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 0.12em; text-transform: uppercase; }
+.d-nav-items { display: flex; flex-direction: column; padding: 8px 10px; gap: 3px; flex: 1; }
+.d-nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 11px; border: none; background: transparent;
+  color: rgba(255,255,255,0.5); font-family: var(--font); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: background 0.15s, color 0.15s;
+}
+.d-nav-item svg { flex-shrink: 0; }
+.d-nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.88); }
+.d-nav-item.active {
+  background: linear-gradient(135deg, rgba(37,99,235,0.28), rgba(29,78,216,0.18));
+  color: #fff; border-left: 3px solid #3b82f6;
+  box-shadow: inset 0 0 0 1px rgba(59,130,246,0.15);
+}
 
-.ib-root { max-width: 1100px; margin: 0 auto; }
+.ib-root { width: 100%; }
 .ib-hero {
-  background: linear-gradient(135deg, #eff6ff 0%, #fff 100%);
-  border: 1px solid var(--border); border-radius: var(--r);
-  padding: 22px 24px; margin-bottom: 20px; box-shadow: var(--sh-sm);
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+  border-radius: 20px; padding: 32px 36px; margin-bottom: 28px;
+  box-shadow: 0 12px 40px rgba(37,99,235,0.35);
+  position: relative; overflow: hidden;
 }
-.ib-hero h2 { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
-.ib-hero p { font-size: 13.5px; color: var(--gray); line-height: 1.55; max-width: 760px; }
+.ib-hero::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(96,165,250,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ib-hero::after {
+  content: '';
+  position: absolute; bottom: -40px; left: 30%;
+  width: 160px; height: 160px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ib-hero-top {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 6px;
+}
+.ib-hero-icon {
+  width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+}
+.ib-hero h2 { font-size: 22px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.02em; }
+.ib-hero-sub { font-size: 13.5px; color: rgba(255,255,255,0.55); margin-bottom: 28px; line-height: 1.5; }
+.pm-flow {
+  display: flex; align-items: stretch; gap: 0; position: relative; z-index: 1;
+}
+.pm-flow-step {
+  flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px; padding: 18px 20px;
+  backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 10px;
+  transition: background 0.2s;
+}
+.pm-flow-step:hover { background: rgba(255,255,255,0.13); }
+.pm-flow-step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  font-size: 10px; font-weight: 800; color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.pm-flow-step-head { display: flex; align-items: center; gap: 8px; }
+.pm-flow-step-label {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.pm-flow-step-title { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.3; }
+.pm-flow-step-path {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px; padding: 4px 10px;
+  font-size: 11px; font-family: monospace; color: #93c5fd; font-weight: 500;
+  width: fit-content;
+}
+.pm-flow-step-path svg { flex-shrink: 0; opacity: 0.7; }
+.pm-flow-arrow {
+  display: flex; align-items: center; padding: 0 10px; flex-shrink: 0;
+}
+.pm-flow-arrow-inner {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.6);
+}
+.pm-flow-step.output {
+  background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.25);
+}
+.pm-flow-step.output .pm-flow-step-path { color: #6ee7b7; background: rgba(0,0,0,0.25); border-color: rgba(16,185,129,0.2); }
+.pm-flow-step.output .pm-flow-step-num { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.4); }
+.pm-flow-step-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 10.5px; font-weight: 700; color: #6ee7b7;
+  width: fit-content;
+}
+@media (max-width: 860px) {
+  .pm-flow { flex-direction: column; }
+  .pm-flow-arrow { padding: 6px 0; justify-content: center; transform: rotate(90deg); }
+  .ib-hero { padding: 24px 20px; }
+}
 .ib-form-wrap {
   background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 22px; box-shadow: var(--sh-sm); margin-bottom: 22px;
+  border-radius: 18px; padding: 28px 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px;
 }
 .ib-section { margin-bottom: 22px; }
 .ib-section h3 {
@@ -480,11 +583,12 @@ body { font-family: var(--font); background: #f1f5f9; -webkit-font-smoothing: an
 .ib-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .ib-list-card {
   background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); overflow: hidden; box-shadow: var(--sh-sm);
+  border-radius: 18px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 .ib-list-card h3 {
-  padding: 16px 18px; font-size: 14px; font-weight: 700;
+  padding: 18px 24px; font-size: 15px; font-weight: 800;
   border-bottom: 1px solid var(--border);
+  background: linear-gradient(to right, #fff, #f8fafc);
 }
 .ib-table-wrap { overflow-x: auto; }
 .ib-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -525,53 +629,61 @@ body { font-family: var(--font); background: #f1f5f9; -webkit-font-smoothing: an
 }
 
 .d-body {
-  max-width: 1440px; margin: 0 auto;
-  padding: 24px max(16px, env(safe-area-inset-left)) 56px max(16px, env(safe-area-inset-right));
+  width: 100%;
+  padding: 28px 32px 56px;
   padding-bottom: max(56px, env(safe-area-inset-bottom));
 }
 
 .d-stats {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px;
 }
 @media (max-width: 900px) { .d-stats { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .d-stats { grid-template-columns: 1fr; gap: 12px; } }
+@media (max-width: 480px) { .d-stats { grid-template-columns: 1fr; gap: 14px; } }
 
 .d-stat {
-  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
-  padding: 20px 22px; display: flex; align-items: center; gap: 16px;
-  box-shadow: var(--sh-sm); transition: box-shadow 0.2s, transform 0.2s;
+  border-radius: 18px; padding: 24px 26px;
+  display: flex; align-items: center; gap: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: box-shadow 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
 }
-.d-stat:hover { box-shadow: var(--sh); transform: translateY(-1px); }
+.d-stat::after {
+  content: ''; position: absolute; right: -18px; top: -18px;
+  width: 90px; height: 90px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); pointer-events: none;
+}
+.d-stat:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.14); transform: translateY(-2px); }
+.d-stat.blue  { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff; }
+.d-stat.green { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
+.d-stat.amber { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #fff; }
+.d-stat.red   { background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #fff; }
 .d-stat-ic {
-  width: 46px; height: 46px; border-radius: 13px;
+  width: 54px; height: 54px; border-radius: 16px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: rgba(255,255,255,0.2);
 }
-.d-stat-ic.blue  { background: var(--blue-bg); color: var(--blue); }
-.d-stat-ic.green { background: var(--green-bg); color: var(--green); }
-.d-stat-ic.amber { background: var(--amber-bg); color: var(--amber); }
-.d-stat-ic.red   { background: var(--red-bg); color: var(--red); }
-.d-stat-val { font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1; }
-.d-stat-lbl { font-size: 12px; color: var(--gray); margin-top: 3px; font-weight: 500; }
+.d-stat-val { font-size: 34px; font-weight: 800; color: #fff; line-height: 1; }
+.d-stat-lbl { font-size: 12.5px; color: rgba(255,255,255,0.8); margin-top: 4px; font-weight: 500; }
 
 .d-tcard {
   background: var(--white); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; box-shadow: var(--sh-sm);
+  border-radius: 18px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 .d-tcard-head {
-  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  padding: 20px 26px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  background: linear-gradient(to right, #fff, #f8fafc);
 }
 .d-tcard-title-wrap { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.d-tcard-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.d-tcard-title { font-size: 16px; font-weight: 800; color: var(--navy); }
 .d-table-hint {
   font-size: 11px; font-weight: 500; color: var(--gray-text);
   display: none; align-items: center; gap: 6px;
 }
 .d-table-hint svg { flex-shrink: 0; opacity: 0.85; }
 .d-tcard-count {
-  font-size: 12px; background: var(--blue-bg); color: var(--blue);
-  border-radius: 20px; padding: 3px 11px; font-weight: 600;
-  flex-shrink: 0;
+  font-size: 12px; background: linear-gradient(135deg, var(--blue-bg), #dbeafe);
+  color: var(--blue); border-radius: 20px; padding: 4px 14px; font-weight: 700;
+  flex-shrink: 0; border: 1px solid #bfdbfe;
 }
 .d-twrap {
   overflow-x: auto;
@@ -579,20 +691,20 @@ body { font-family: var(--font); background: #f1f5f9; -webkit-font-smoothing: an
   overscroll-behavior-x: contain;
   scrollbar-color: #cbd5e1 var(--surface);
 }
-.d-twrap::-webkit-scrollbar { height: 8px; }
+.d-twrap::-webkit-scrollbar { height: 6px; }
 .d-twrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
 table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .d-table th {
-  padding: 11px 16px; font-size: 10.5px; font-weight: 700; color: #94a3b8;
+  padding: 13px 20px; font-size: 10.5px; font-weight: 700; color: #94a3b8;
   letter-spacing: 0.08em; text-transform: uppercase; text-align: left;
-  border-bottom: 1px solid var(--border); background: var(--surface); white-space: nowrap;
+  border-bottom: 1px solid var(--border); background: #f8fafc; white-space: nowrap;
 }
 .d-table td {
-  padding: 14px 16px; font-size: 13.5px; color: #374151;
+  padding: 16px 20px; font-size: 13.5px; color: #374151;
   border-bottom: 1px solid var(--border); vertical-align: middle;
 }
 .d-table tr:last-child td { border-bottom: none; }
-.d-table tr:hover td { background: #fafbfd; }
+.d-table tr:hover td { background: #f0f7ff; }
 
 .ref-chip {
   background: var(--blue-bg); color: #1d4ed8; border-radius: 6px;
@@ -600,23 +712,24 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 }
 .badge {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px; border-radius: 20px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 700; white-space: nowrap;
 }
 .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
-.badge-green { background:#dcfce7; color:#15803d; }
-.badge-amber { background:#fef3c7; color:#92400e; }
-.badge-red   { background:#fee2e2; color:#b91c1c; }
-.badge-gray  { background:#f1f5f9; color:#64748b; }
+.badge-green { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+.badge-amber { background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+.badge-red   { background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; }
+.badge-gray  { background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0; }
 
 .open-btn {
-  padding: 9px 16px; min-height: 40px; background: var(--blue); color: #fff;
-  border: none; border-radius: 10px; cursor: pointer;
+  padding: 9px 18px; min-height: 40px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+  color: #fff; border: none; border-radius: 10px; cursor: pointer;
   font-family: var(--font); font-size: 12px; font-weight: 600;
-  transition: background 0.15s, transform 0.1s;
-  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+  white-space: nowrap; box-shadow: 0 3px 10px rgba(37,99,235,0.3);
 }
-.open-btn:hover { background: var(--blue-dk); }
+.open-btn:hover { opacity: 0.92; box-shadow: 0 5px 14px rgba(37,99,235,0.38); }
 .open-btn:active { transform: scale(0.97); }
 
 .d-empty { padding: 60px 20px; text-align: center; font-size: 14px; color: #94a3b8; }
@@ -626,10 +739,11 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .d-spinner-lbl { font-size:12px; color:#94a3b8; font-weight:500; }
 
-.d-detail { background:var(--white); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--sh-sm); }
+.d-detail { background:var(--white); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.07); }
 .d-dhead {
-  padding:18px 24px; border-bottom:1px solid var(--border);
+  padding:22px 28px; border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  background: linear-gradient(to right, #fff, #f8fafc);
 }
 .d-dhead-l { display:flex; align-items:center; gap:14px; }
 .d-back {
@@ -654,24 +768,26 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .dl-btn.dark { background:var(--navy); color:#fff; }
 .dl-btn.dark:hover { background:var(--slate); }
 
-.d-dbody { display:grid; grid-template-columns:1fr 320px; }
+.d-dbody { display:grid; grid-template-columns:1fr 380px; }
+@media (max-width:1200px) { .d-dbody { grid-template-columns:1fr 320px; } }
 @media (max-width:1024px) { .d-dbody { grid-template-columns:1fr; } }
 
-.d-media { padding:22px 24px; border-right:1px solid var(--border); }
+.d-media { padding:26px 28px; border-right:1px solid var(--border); }
 @media (max-width:1024px) { .d-media { border-right:none; border-bottom:1px solid var(--border); } }
 
 .sec-label {
   font-size:10.5px; font-weight:700; color:var(--blue);
   letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px;
 }
-.d-mgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,168px),1fr)); gap:14px; }
-.d-mbox { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.d-mgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr)); gap:16px; }
+.d-mbox { background:var(--white); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.05); transition:box-shadow 0.2s, transform 0.2s; }
+.d-mbox:hover { box-shadow:0 4px 16px rgba(0,0,0,0.1); transform:translateY(-2px); }
 .d-mbox-lbl {
-  padding:8px 12px; font-size:10px; font-weight:700;
-  color:var(--gray); letter-spacing:0.07em; text-transform:uppercase;
-  border-bottom:1px solid var(--border);
+  padding:9px 14px; font-size:10px; font-weight:700;
+  color:var(--blue); letter-spacing:0.07em; text-transform:uppercase;
+  border-bottom:1px solid var(--border); background:#f8fafc;
 }
-.d-mimg-wrap { height:150px; background:#e5e7eb; position:relative; overflow:hidden; }
+.d-mimg-wrap { height:170px; background:#e5e7eb; position:relative; overflow:hidden; }
 .d-mimg { width:100%; height:100%; object-fit:cover; cursor:zoom-in; display:block; transition:transform 0.2s; }
 .d-mimg:hover { transform:scale(1.04); }
 .d-mmark {
@@ -693,37 +809,37 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
   font-size:13px; color:#94a3b8;
 }
 
-.d-sidebar { padding:22px; }
+.d-sidebar { padding:24px 22px; display:flex; flex-direction:column; gap:16px; }
 .d-icard {
-  background:var(--surface); border:1px solid var(--border); border-radius:12px;
-  padding:16px; margin-bottom:14px;
+  background:var(--white); border:1px solid var(--border); border-radius:14px;
+  padding:18px; box-shadow:0 1px 6px rgba(0,0,0,0.04);
 }
 .d-irow {
   display:flex; justify-content:space-between; align-items:flex-start;
-  padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; gap:10px;
+  padding:9px 0; border-bottom:1px solid #f1f5f9; font-size:13px; gap:10px;
 }
 .d-irow:last-child { border-bottom:none; }
 .d-ikey { color:#94a3b8; font-size:11.5px; font-weight:600; flex-shrink:0; }
-.d-ival { color:var(--slate); font-weight:500; text-align:right; word-break:break-all; }
-.d-amt  { font-size:23px; font-weight:800; color:var(--blue); }
+.d-ival { color:var(--slate); font-weight:600; text-align:right; word-break:break-all; }
+.d-amt  { font-size:26px; font-weight: 800; color:var(--blue); }
 
-.d-acard { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
-.d-atitle { font-size:10.5px; font-weight:700; color:var(--gray); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px; }
+.d-acard { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
+.d-atitle { font-size:10.5px; font-weight:700; color:var(--blue); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:14px; }
 .abtn {
-  width:100%; padding:11px 16px; border-radius:10px; border:none; cursor:pointer;
-  font-family:var(--font); font-size:12.5px; font-weight:600;
+  width:100%; padding:12px 16px; border-radius:11px; border:none; cursor:pointer;
+  font-family:var(--font); font-size:13px; font-weight:600;
   letter-spacing:0.01em; margin-bottom:8px;
   display:flex; align-items:center; justify-content:center; gap:7px;
-  transition:opacity 0.15s, transform 0.1s;
+  transition:opacity 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 .abtn:last-child { margin-bottom:0; }
 .abtn:active { transform:scale(0.99); }
-.abtn.green     { background:var(--green); color:#fff; }
-.abtn.green:hover { opacity:0.88; }
+.abtn.green     { background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; box-shadow:0 3px 10px rgba(22,163,74,0.3); }
+.abtn.green:hover { opacity:0.9; box-shadow:0 5px 14px rgba(22,163,74,0.38); }
 .abtn.soft-red  { background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; }
 .abtn.soft-red:hover { background:#fecaca; }
-.abtn.hard-red  { background:var(--red); color:#fff; }
-.abtn.hard-red:hover { opacity:0.88; }
+.abtn.hard-red  { background:linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; box-shadow:0 3px 10px rgba(220,38,38,0.3); }
+.abtn.hard-red:hover { opacity:0.9; box-shadow:0 5px 14px rgba(220,38,38,0.38); }
 .a-div { height:1px; background:var(--border); margin:10px 0; }
 
 .d-doc-overlay {
@@ -860,7 +976,7 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 @media (max-width: 640px) {
   .d-table-hint { display: flex; }
   .d-tcard-head { padding: 14px 16px; align-items: flex-start; }
-  .d-body { padding: 14px 12px 40px; padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+  .d-body { padding: 16px 14px 40px; padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
   .d-stats { gap: 10px; }
   .d-stat { padding: 14px 16px; }
   .d-stat-val { font-size: 22px; }
@@ -885,10 +1001,28 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
   .d-video { max-height: 220px; }
 }
 
+@media (max-width: 768px) {
+  .d-root { flex-direction: column; }
+  .d-nav-sidebar {
+    width: 100%; min-height: auto; height: auto;
+    position: static; flex-direction: row;
+    overflow-x: auto; overflow-y: hidden;
+  }
+  .d-nav-brand { display: none; }
+  .d-nav-section { display: none; }
+  .d-nav-items { flex-direction: row; padding: 0 8px; gap: 0; overflow-x: auto; flex: none; }
+  .d-nav-item {
+    white-space: nowrap; border-radius: 0; border-left: none !important;
+    border-bottom: 2px solid transparent; padding: 14px 18px;
+    box-shadow: none !important;
+  }
+  .d-nav-item.active { border-bottom-color: #3b82f6; background: rgba(37,99,235,0.15); color: #fff; }
+  .d-main { min-height: 0; }
+}
+
 @media (max-width: 380px) {
   .d-brand { font-size: 14px; }
   .d-brand-dot { width: 30px; height: 30px; }
-  .d-tabbar { padding: 0 12px; overflow-x: auto; }
   .ib-grid { grid-template-columns: 1fr; }
 }
 `;
@@ -1846,14 +1980,89 @@ function PdfMergePanel({ showToast, downloadFile }) {
   return (
     <div className="ib-root">
       <div className="ib-hero">
-        <h2>Merge PDFs</h2>
-        <p>
-          Combine two PDFs into one file. Pages are appended in order:{" "}
-          <strong>indemnity bond first</strong>, then <strong>KYC summary</strong>. Pick files
-          from the lists (from <code className="ib-small">storage/indemnity_pdfs</code> and{" "}
-          <code className="ib-small">storage/pdfs</code>), then merge. Output is saved under{" "}
-          <code className="ib-small">storage/merged/</code> and downloaded automatically.
-        </p>
+        <div className="ib-hero-top">
+          <div className="ib-hero-icon">
+            <svg width="22" height="22" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <h2>Merge PDFs</h2>
+        </div>
+        <p className="ib-hero-sub">Combine two PDFs into one file — pages are appended in order.</p>
+
+        <div className="pm-flow">
+          {/* Step 1 */}
+          <div className="pm-flow-step">
+            <div className="pm-flow-step-head">
+              <div className="pm-flow-step-num">1</div>
+              <span className="pm-flow-step-label">First in output</span>
+            </div>
+            <div className="pm-flow-step-title">Indemnity Bond PDF</div>
+            <div className="pm-flow-step-path">
+              <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" strokeLinejoin="round"/>
+              </svg>
+              storage/indemnity_pdfs
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="pm-flow-arrow">
+            <div className="pm-flow-arrow-inner">
+              <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="pm-flow-step">
+            <div className="pm-flow-step-head">
+              <div className="pm-flow-step-num">2</div>
+              <span className="pm-flow-step-label">Appended after</span>
+            </div>
+            <div className="pm-flow-step-title">KYC Summary PDF</div>
+            <div className="pm-flow-step-path">
+              <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" strokeLinejoin="round"/>
+              </svg>
+              storage/pdfs
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="pm-flow-arrow">
+            <div className="pm-flow-arrow-inner">
+              <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Output */}
+          <div className="pm-flow-step output">
+            <div className="pm-flow-step-head">
+              <div className="pm-flow-step-num">✓</div>
+              <span className="pm-flow-step-label">Result</span>
+            </div>
+            <div className="pm-flow-step-title">Merged &amp; Downloaded</div>
+            <div className="pm-flow-step-path">
+              <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" strokeLinejoin="round"/>
+              </svg>
+              storage/merged/
+            </div>
+            <div className="pm-flow-step-badge">
+              <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Auto-download
+            </div>
+          </div>
+        </div>
       </div>
 
       <form className="ib-form-wrap" onSubmit={handleMerge}>
@@ -1932,10 +2141,22 @@ function PdfMergePanel({ showToast, downloadFile }) {
         </div>
       </form>
 
-      <p className="ib-small" style={{ marginTop: 8, lineHeight: 1.5 }}>
-        Tip: for the same customer, bond and KYC often share the same ref (e.g.{" "}
-        <code>indemnity_pdfs/CN-12.pdf</code> and <code>pdfs/CN-12.pdf</code>).
-      </p>
+      <div style={{
+        display:"flex", alignItems:"flex-start", gap:12,
+        background:"#eff6ff", border:"1px solid #bfdbfe",
+        borderRadius:14, padding:"14px 18px"
+      }}>
+        <svg width="16" height="16" fill="none" stroke="#2563eb" strokeWidth="2" viewBox="0 0 24 24" style={{flexShrink:0,marginTop:1}}>
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p style={{fontSize:12.5,color:"#1d4ed8",lineHeight:1.6,margin:0}}>
+          <strong>Tip:</strong> For the same customer, the bond and KYC files often share the same ref —
+          e.g. <code style={{background:"#dbeafe",borderRadius:4,padding:"1px 5px",fontSize:11}}>indemnity_pdfs/CN-12.pdf</code> pairs
+          with <code style={{background:"#dbeafe",borderRadius:4,padding:"1px 5px",fontSize:11}}>pdfs/CN-12.pdf</code>.
+        </p>
+      </div>
     </div>
   );
 }
@@ -2141,6 +2362,58 @@ const AdminDashboard = () => {
     <>
       <style>{CSS}</style>
       <div className="d-root">
+        <nav className="d-nav-sidebar" aria-label="Admin sections">
+          <div className="d-nav-brand">
+            <div className="d-nav-brand-dot">
+              <svg width="16" height="16" fill="none" stroke="#fff" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinejoin="round" />
+              </svg>
+            </div>
+            COINORA <span className="d-nav-accent">&nbsp;Admin</span>
+          </div>
+          <div className="d-nav-items">
+            <button
+              type="button"
+              className={`d-nav-item ${adminPanel === "kyc" ? "active" : ""}`}
+              onClick={() => setAdminPanel("kyc")}
+            >
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" />
+              </svg>
+              KYC Records
+            </button>
+            <button
+              type="button"
+              className={`d-nav-item ${adminPanel === "indemnity" ? "active" : ""}`}
+              onClick={() => { setAdminPanel("indemnity"); setSelected(null); }}
+            >
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              Indemnity Bond
+            </button>
+            <button
+              type="button"
+              className={`d-nav-item ${adminPanel === "merge" ? "active" : ""}`}
+              onClick={() => { setAdminPanel("merge"); setSelected(null); }}
+            >
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <rect x="2" y="3" width="8" height="11" rx="1" />
+                <rect x="14" y="3" width="8" height="11" rx="1" />
+                <path d="M6 20h12M12 14v6" strokeLinecap="round" />
+              </svg>
+              PDF Merge
+            </button>
+          </div>
+        </nav>
+
+        <div className="d-main">
         {sessionWarn && (
           <div className="d-session-bar">
             ⚠️ Session expiring soon — move your mouse or click to extend.
@@ -2258,38 +2531,6 @@ const AdminDashboard = () => {
           </div>
         </header>
 
-        <nav className="d-tabbar" aria-label="Admin sections">
-          <button
-            type="button"
-            className={`d-tab ${adminPanel === "kyc" ? "active" : ""}`}
-            onClick={() => {
-              setAdminPanel("kyc");
-            }}
-          >
-            KYC records
-          </button>
-          <button
-            type="button"
-            className={`d-tab ${adminPanel === "indemnity" ? "active" : ""}`}
-            onClick={() => {
-              setAdminPanel("indemnity");
-              setSelected(null);
-            }}
-          >
-            Indemnity bond
-          </button>
-          <button
-            type="button"
-            className={`d-tab ${adminPanel === "merge" ? "active" : ""}`}
-            onClick={() => {
-              setAdminPanel("merge");
-              setSelected(null);
-            }}
-          >
-            PDF merge
-          </button>
-        </nav>
-
         <div className="d-body">
           {adminPanel === "indemnity" ? (
             <IndemnityBondPanel showToast={showToast} downloadFile={downloadFile} />
@@ -2304,23 +2545,10 @@ const AdminDashboard = () => {
                     val: stats.total,
                     cls: "blue",
                     icon: (
-                      <svg
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
-                          strokeLinecap="round"
-                        />
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" />
                         <circle cx="9" cy="7" r="4" />
-                        <path
-                          d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
-                          strokeLinecap="round"
-                        />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" />
                       </svg>
                     ),
                   },
@@ -2329,23 +2557,9 @@ const AdminDashboard = () => {
                     val: stats.verified,
                     cls: "green",
                     icon: (
-                      <svg
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M22 11.08V12a10 10 0 11-5.93-9.14"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d="M22 4L12 14.01l-3-3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" />
+                        <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     ),
                   },
@@ -2354,14 +2568,7 @@ const AdminDashboard = () => {
                     val: stats.pending,
                     cls: "amber",
                     icon: (
-                      <svg
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        viewBox="0 0 24 24"
-                      >
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 6v6l4 2" strokeLinecap="round" />
                       </svg>
@@ -2372,22 +2579,15 @@ const AdminDashboard = () => {
                     val: stats.rejected,
                     cls: "red",
                     icon: (
-                      <svg
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        viewBox="0 0 24 24"
-                      >
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M15 9l-6 6M9 9l6 6" strokeLinecap="round" />
                       </svg>
                     ),
                   },
                 ].map(({ label, val, cls, icon }) => (
-                  <div className="d-stat" key={label}>
-                    <div className={`d-stat-ic ${cls}`}>{icon}</div>
+                  <div className={`d-stat ${cls}`} key={label}>
+                    <div className="d-stat-ic">{icon}</div>
                     <div>
                       <div className="d-stat-val">{val}</div>
                       <div className="d-stat-lbl">{label}</div>
@@ -2770,6 +2970,7 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
 
