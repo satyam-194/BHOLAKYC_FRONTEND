@@ -1500,12 +1500,53 @@ const IB_LONG_FIELDS = new Set([
   "amountInWords",
 ]);
 
+const COMPLIANCE_OPTIONS = {
+  q1: [
+    "Yes-using my own funds",
+    "No-third-party funds",
+  ],
+  q2: [
+    "Confirmed these funds are clean",
+    "Not confirmed",
+  ],
+  q3: [
+    "Business Owner",
+    "Salaried Employee",
+    "Self-Employed",
+    "Student",
+    "Other",
+  ],
+  q4: [
+    "Yes, I agree",
+    "I do not agree",
+  ],
+  q5: [
+    "HOLD/Investment",
+    "Spot Trading",
+    "Futures Trading",
+    "Buy from Coinora and sell via P2P",
+  ],
+};
+
+const SELLER_PRESETS = [
+  {
+    label: "Akash Gupta",
+    holderName: "Akash Gupta",
+    holderFatherName: "Lalbabu Gupta",
+    holderAadhaar: "349515697508",
+    holderPAN: "DOZPG8291H",
+    holderAddress: "201, SHREENATH BHAKTI, INDRALOK PHASE-1,BHAYANDER EAST,THANE:-401105",
+    holderUID: "234688995",
+  },
+];
+
 function IndemnityBondPanel({ showToast, downloadFile }) {
   const [groups, setGroups] = useState([]);
   const [form, setForm] = useState({});
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [listLoading, setListLoading] = useState(false);
+  const [sellerPreset, setSellerPreset] = useState("");
 
   const loadList = useCallback(async () => {
     setListLoading(true);
@@ -1549,6 +1590,22 @@ function IndemnityBondPanel({ showToast, downloadFile }) {
 
   const setField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSellerPreset = (label) => {
+    setSellerPreset(label);
+    if (!label) return;
+    const preset = SELLER_PRESETS.find((p) => p.label === label);
+    if (!preset) return;
+    setForm((prev) => ({
+      ...prev,
+      holderName: preset.holderName,
+      holderFatherName: preset.holderFatherName,
+      holderAadhaar: preset.holderAadhaar,
+      holderPAN: preset.holderPAN,
+      holderAddress: preset.holderAddress,
+      holderUID: preset.holderUID,
+    }));
   };
 
   const handleGenerate = async (e) => {
@@ -1599,11 +1656,39 @@ function IndemnityBondPanel({ showToast, downloadFile }) {
         {groups.map((sec) => (
           <div className="ib-section" key={sec.title}>
             <h3>{sec.title}</h3>
+            {sec.title === "Indemnity holder (seller)" && (
+              <div className="ib-field" style={{ marginBottom: "12px" }}>
+                <label htmlFor="ib-seller-preset">Quick fill — select seller</label>
+                <select
+                  id="ib-seller-preset"
+                  value={sellerPreset}
+                  onChange={(e) => handleSellerPreset(e.target.value)}
+                >
+                  <option value="">— Select a seller —</option>
+                  {SELLER_PRESETS.map((p) => (
+                    <option key={p.label} value={p.label}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="ib-grid">
               {sec.fields.map((f) => (
                 <div className="ib-field" key={f.key}>
                   <label htmlFor={`ib-${f.key}`}>{f.label}</label>
-                  {IB_LONG_FIELDS.has(f.key) ? (
+                  {COMPLIANCE_OPTIONS[f.key] ? (
+                    <select
+                      id={`ib-${f.key}`}
+                      value={form[f.key] ?? ""}
+                      onChange={(e) => setField(f.key, e.target.value)}
+                    >
+                      <option value="">— Select —</option>
+                      {COMPLIANCE_OPTIONS[f.key].map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  ) : IB_LONG_FIELDS.has(f.key) ? (
                     <textarea
                       id={`ib-${f.key}`}
                       value={form[f.key] ?? ""}
@@ -1706,6 +1791,8 @@ function PdfMergePanel({ showToast, downloadFile }) {
   const [kycPdfs, setKycPdfs] = useState([]);
   const [bondPath, setBondPath] = useState("");
   const [kycPath, setKycPath] = useState("");
+  const [bondSearch, setBondSearch] = useState("");
+  const [kycSearch, setKycSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [sourcesLoading, setSourcesLoading] = useState(false);
 
@@ -1773,19 +1860,29 @@ function PdfMergePanel({ showToast, downloadFile }) {
         <div className="ib-section">
           <h3>1. Indemnity bond PDF (first in the merged document)</h3>
           <div className="ib-field">
+            <label htmlFor="merge-bond-search">Search bond PDF</label>
+            <input
+              id="merge-bond-search"
+              type="text"
+              placeholder="Type to filter…"
+              value={bondSearch}
+              onChange={(e) => setBondSearch(e.target.value)}
+              style={{ marginBottom: "6px" }}
+            />
             <label htmlFor="merge-bond">File</label>
             <select
               id="merge-bond"
               value={bondPath}
               onChange={(e) => setBondPath(e.target.value)}
               className="pm-select"
+              size={Math.min(6, bondPdfs.filter((p) => p.toLowerCase().includes(bondSearch.toLowerCase())).length + 1)}
             >
               <option value="">— Select bond PDF —</option>
-              {bondPdfs.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
+              {bondPdfs
+                .filter((p) => p.toLowerCase().includes(bondSearch.toLowerCase()))
+                .map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
             </select>
           </div>
         </div>
@@ -1793,19 +1890,29 @@ function PdfMergePanel({ showToast, downloadFile }) {
         <div className="ib-section">
           <h3>2. KYC summary PDF (appended after the bond)</h3>
           <div className="ib-field">
+            <label htmlFor="merge-kyc-search">Search KYC PDF</label>
+            <input
+              id="merge-kyc-search"
+              type="text"
+              placeholder="Type to filter…"
+              value={kycSearch}
+              onChange={(e) => setKycSearch(e.target.value)}
+              style={{ marginBottom: "6px" }}
+            />
             <label htmlFor="merge-kyc">File</label>
             <select
               id="merge-kyc"
               value={kycPath}
               onChange={(e) => setKycPath(e.target.value)}
               className="pm-select"
+              size={Math.min(6, kycPdfs.filter((p) => p.toLowerCase().includes(kycSearch.toLowerCase())).length + 1)}
             >
               <option value="">— Select KYC PDF —</option>
-              {kycPdfs.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
+              {kycPdfs
+                .filter((p) => p.toLowerCase().includes(kycSearch.toLowerCase()))
+                .map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
             </select>
           </div>
         </div>
