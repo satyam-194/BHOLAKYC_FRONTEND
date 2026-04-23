@@ -318,7 +318,7 @@ const SCRIPT = (fullname, amount, utr) => {
   const amtRaw = amount != null ? String(amount).trim() : '';
   const amtDisp = amtRaw || '____';
   const refDisp = String(utr ?? '').trim() || '____';
-  return `My name is ${nameDisp}. I paid COINORA VDASP PVT LTD ${amtDisp} rupees. My transaction reference number is ${refDisp}. This payment is safe and genuine. I have not sent any fraudulent amount. If due to my payment any debit freeze, lien, or hold occurs and it is proven to be because of my transaction, I will refund the equivalent USDT or INR amount within 24 hours. If I fail to refund, this video recording may be used for legal purposes. I voluntarily purchased USDT of my own free will. I was clearly warned about commission and profit scams on unknown platforms and advised to stay away from them. I confirm that no person on Telegram or any other platform is guiding or instructing me to buy or sell USDT. I was clearly informed that withdrawing USDT from the exchange to any other wallet or platform is not advised. If I still choose to do so and incur any financial loss, I shall bear full responsibility for that loss.`;
+  return `Mera naam ${nameDisp} hai. Maine COINORA VDASP PVT LTD ko ${amtDisp} rupaye diye hain. Mera transaction reference number ${refDisp} hai. Yeh payment bilkul safe aur genuine hai. Maine koi bhi fraudulent amount nahi bheja hai. Agar mere payment ki wajah se koi bhi debit freeze, lien, ya hold aata hai aur yeh prove hota hai ki yeh mere transaction ki wajah se hua, toh main 24 ghante ke andar equivalent USDT ya INR amount wapas kar dunga. Agar main refund karne mein nakaam raha, toh yeh video recording legal purposes ke liye use ki ja sakti hai. Maine apni poori marzi se USDT purchase kiya hai. Mujhe clearly bataya gaya tha ki unknown platforms par commission aur profit ke naam par hone wale scams se door rahein aur mujhe inse bachne ki salah di gayi thi. Main confirm karta hoon ki koi bhi insaan Telegram ya kisi bhi aur platform par mujhe USDT kharidne ya bechne ke liye guide ya instruct nahi kar raha hai. Mujhe clearly inform kiya gaya tha ki USDT ko exchange se kisi bhi aur wallet ya platform par withdraw karna advisable nahi hai. Agar main phir bhi aisa karta hoon aur mujhe koi bhi financial loss hota hai, toh us loss ki poori zimmedari meri khud ki hogi.`;
 };
 
 function ArrowRight() {
@@ -507,7 +507,7 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
       } else {
         el.scrollTop += 1;
       }
-    }, 45);
+    }, 100);
   }, []);
 
   const stopTeleprompter = useCallback(() => {
@@ -835,7 +835,7 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
                 <p className="pc-eyebrow">Final Verification</p>
                 <h1 className="pc-title">Video <span>Consent</span></h1>
                 <p className="pc-head-desc">
-                  {phase === 'review' 
+                  {phase === 'review'
                     ? 'Review your recording. If satisfied, submit.'
                     : 'Read the declaration aloud — camera and microphone are on.'}
                 </p>
@@ -908,11 +908,11 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
                   <div className="pc-instructions">
                     <p className="pc-instructions-title">Instructions</p>
                     <div className="pc-instructions-list">
-                      {phase === 'review' 
+                      {phase === 'review'
                         ? [
                             'Watch the video to ensure clarity',
                             'Ensure your face is visible throughout',
-                            'Retake if the video is blurry or incomplete'
+                            'Retake if the video is blurry or incomplete',
                           ].map((txt, i) => (
                             <div key={i} className="pc-instruction-item">
                               <div className="pc-instr-dot" />

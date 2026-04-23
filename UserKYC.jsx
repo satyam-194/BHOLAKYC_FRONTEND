@@ -29,11 +29,15 @@ const STYLES = `
 
   .kyc-header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid #e4e8f0;
-    padding: 14px 24px;
+    padding: 12px 24px 0;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  .kyc-header-top {
     display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 12px;
   }
   .kyc-logo {
     font-family: 'Syne', sans-serif; font-weight: 800;
@@ -51,6 +55,45 @@ const STYLES = `
     letter-spacing: 0.1em; text-transform: uppercase;
     background: #eff6ff; color: #1d4ed8;
     border: 1px solid #bfdbfe; border-radius: 20px; padding: 4px 10px;
+  }
+
+  /* ---- STEPPER ---- */
+  .kyc-stepper {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0;
+  }
+  .kyc-step-circle {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc; color: #94a3b8;
+    transition: background 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+  .kyc-step-circle.done {
+    background: #ecfdf5; border-color: #34d399; color: #059669;
+    box-shadow: 0 0 0 3px rgba(52,211,153,0.13);
+  }
+  .kyc-step-circle.active {
+    background: #2563eb; border-color: #2563eb; color: #fff;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.16), 0 3px 12px rgba(37,99,235,0.28);
+  }
+  .kyc-step-arrow {
+    display: flex; align-items: center; gap: 0; padding: 0 4px;
+  }
+  .kyc-step-line {
+    width: 22px; height: 2px; border-radius: 2px;
+    background: #e2e8f0; transition: background 0.3s;
+  }
+  .kyc-step-line.done { background: #34d399; }
+  .kyc-step-chevron {
+    flex-shrink: 0; color: #cbd5e1; transition: color 0.2s;
+  }
+  .kyc-step-chevron.done { color: #34d399; }
+
+  @media (max-width: 380px) {
+    .kyc-step-circle { width: 27px; height: 27px; font-size: 11px; }
+    .kyc-step-line { width: 14px; }
   }
 
   .kyc-status-page {
@@ -204,7 +247,8 @@ const STYLES = `
   }
 
   @media (max-width: 520px) {
-    .kyc-header { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+    .kyc-header { padding: 10px 16px 0; }
+    .kyc-header-top { padding-bottom: 10px; flex-wrap: wrap; gap: 6px; }
     .kyc-logo { font-size: 13px; }
     .kyc-status-page { padding: 16px 12px 48px; }
     .kyc-status-card { padding: 28px 18px; border-radius: 20px; }
@@ -226,13 +270,58 @@ const getRejectionReasons = (answers) => {
   return reasons;
 };
 
-const KYCHeader = () => (
+const STEP_COUNT = 3;
+
+const CheckIcon = () => (
+  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.8" viewBox="0 0 24 24">
+    <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ArrowIcon = ({ done }) => (
+  <svg
+    className={`kyc-step-chevron${done ? ' done' : ''}`}
+    width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4"
+    viewBox="0 0 24 24"
+  >
+    <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+/* Purely horizontal:  ①  ——›  ②  ——›  ③  */
+const KYCStepper = ({ currentStep }) => (
+  <div className="kyc-stepper">
+    {Array.from({ length: STEP_COUNT }, (_, i) => {
+      const num = i + 1;
+      const isDone   = currentStep > num;
+      const isActive = currentStep === num;
+      return (
+        <React.Fragment key={num}>
+          <div className={`kyc-step-circle${isDone ? ' done' : isActive ? ' active' : ''}`}>
+            {isDone ? <CheckIcon /> : num}
+          </div>
+          {num < STEP_COUNT && (
+            <div className="kyc-step-arrow">
+              <div className={`kyc-step-line${isDone ? ' done' : ''}`} />
+              <ArrowIcon done={isDone} />
+            </div>
+          )}
+        </React.Fragment>
+      );
+    })}
+  </div>
+);
+
+const KYCHeader = ({ currentStep }) => (
   <header className="kyc-header">
-    <div className="kyc-logo">
-      <div className="kyc-logo-dot" />
-      COINORA <span className="kyc-logo-accent">&nbsp;VDASP</span>
+    <div className="kyc-header-top">
+      <div className="kyc-logo">
+        <div className="kyc-logo-dot" />
+        COINORA <span className="kyc-logo-accent">&nbsp;VDASP</span>
+      </div>
+      <div className="kyc-header-badge">🔒 Secure KYC</div>
     </div>
-    <div className="kyc-header-badge">🔒 Secure KYC</div>
+    {currentStep != null && <KYCStepper currentStep={currentStep} />}
   </header>
 );
 
@@ -411,7 +500,7 @@ function isProofRejected(status) {
   return String(status).trim().toLowerCase() === 'rejected';
 }
 
-const UserKYC = ({ apiBaseUrl, onNavigate }) => {
+const UserKYC = ({ apiBaseUrl, onNavigate, onBackToLanding }) => {
   const { toast, showToast } = useToast();
   const [currentStep,      setCurrentStep]      = useState(1);
   const [rejectionReasons, setRejectionReasons] = useState([]);
@@ -695,6 +784,11 @@ const UserKYC = ({ apiBaseUrl, onNavigate }) => {
     <>
       <KycToast toast={toast} />
       <div className="kyc-phase-shell">
+      <style>{`
+        .kyc-step-bar { display: none !important; }
+        .pb-phase-bar { display: none !important; }
+        .pc-phase-bar { display: none !important; }
+      `}</style>
       <AnimatePresence>
         {loading && <LoadingOverlay key="loader" />}
       </AnimatePresence>
@@ -702,22 +796,11 @@ const UserKYC = ({ apiBaseUrl, onNavigate }) => {
       <AnimatePresence mode="wait">
         {currentStep === 1 && (
           <motion.div className="kyc-phase-motion" key={`phase-a-${phaseAResetKey}`} variants={fadeUp} initial="initial" animate="animate" exit="exit" transition={fadeUpTransition}>
-            <PhaseA 
+            <PhaseA
               apiBaseUrl={apiBaseUrl}
               onNext={handlePhase1Submit}
               onContinueKyc={handleContinueFromPhase1}
-              onBack={() => {
-                if (typeof window === 'undefined') return;
-                if (window.history.length > 1) {
-                  window.history.back();
-                } else {
-                  showToast(
-                    'There is no previous page in this tab. Close the tab or open the site again to start over.',
-                    'info',
-                    4500,
-                  );
-                }
-              }}
+              onBack={() => { if (onBackToLanding) onBackToLanding(); }}
             />
           </motion.div>
         )}

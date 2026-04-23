@@ -1,51 +1,56 @@
 import React, { useState } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 
-import UserKYC from "./UserKYC";
-import AdminDashboard from "./AdminDashboard";
-import { API_BASE as API_BASE_URL } from "./apiBase.js";
+import LandingPage from './LandingPage';
+import UserKYC from './UserKYC';
+import AdminDashboard from './AdminDashboard';
+import { API_BASE as API_BASE_URL } from './apiBase.js';
 
-const UserKYCWrapper = ({ apiBaseUrl, onNavigate }) => {
-  const [activePhase, setActivePhase] = useState('A');
-  const [kycData, setKycData] = useState(null);
-  const location = useLocation();
-  const hash = location.hash; 
+const UserKYCWrapper = ({ apiBaseUrl, onNavigate, onBackToLanding }) => (
+  <UserKYC
+    apiBaseUrl={apiBaseUrl}
+    onNavigate={(hash) => { window.location.hash = hash; }}
+    onBackToLanding={onBackToLanding}
+  />
+);
 
-  React.useEffect(() => {
-    if (hash === '#PhaseB') setActivePhase('B');
-    else if (hash === '#PhaseA') setActivePhase('A');
-    else setActivePhase('A'); 
-  }, [hash]);
+const AppInner = () => {
+  const [showKyc, setShowKyc] = useState(false);
 
-  const handleNext = (data) => {
-    setKycData(data);
-    setActivePhase('B');
-    window.location.hash = 'PhaseB'; 
+  const handleGetStarted = () => {
+    setShowKyc(true);
+    window.scrollTo({ top: 0 });
   };
 
-  const handleBack = () => {
-    setActivePhase('A');
-    window.location.hash = 'PhaseA'; 
+  const handleBackToLanding = () => {
+    setShowKyc(false);
+    window.location.hash = '';
+    window.scrollTo({ top: 0 });
   };
 
   return (
-    <UserKYC
-      apiBaseUrl={apiBaseUrl}
-      onNavigate={(hash) => { window.location.hash = hash; }}
-    />
+    <Routes>
+      <Route path="/admin/*" element={<AdminDashboard />} />
+      <Route
+        path="*"
+        element={
+          showKyc
+            ? <UserKYCWrapper
+                apiBaseUrl={API_BASE_URL}
+                onNavigate={(h) => { window.location.hash = h; }}
+                onBackToLanding={handleBackToLanding}
+              />
+            : <LandingPage onGetStarted={handleGetStarted} />
+        }
+      />
+    </Routes>
   );
 };
 
 function App() {
   return (
     <HashRouter>
-      <Routes>
-        <Route path="/admin/*" element={<AdminDashboard />} />
-                
-        <Route path="*" element={
-          <UserKYCWrapper apiBaseUrl={API_BASE_URL} onNavigate={(h) => window.location.hash = h} />
-        } />
-      </Routes>
+      <AppInner />
     </HashRouter>
   );
 }
