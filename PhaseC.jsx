@@ -161,6 +161,7 @@ const CSS = `
 .pc-cam-wrap video{
   width:100%;height:100%;object-fit:cover;
   display:block;
+  transition:transform 0.4s ease;
 }
 
 .pc-badge-overlay {
@@ -768,6 +769,66 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
       startRecording();
     }
   }, [phase, countdown, startRecording]);
+
+  // Face-detection zoom — adjusts live preview only, recorded stream is untouched.
+  // Uses the browser's built-in Shape Detection API (Chrome/Edge). Silently skipped on unsupported browsers.
+  useEffect(() => {
+    if (phase === 'review' || isAlreadySubmitted) return;
+    if (typeof window === 'undefined' || !('FaceDetector' in window)) return;
+
+    let cancelled = false;
+    let rafId = null;
+    let timerId = null;
+    let detector;
+
+    try {
+      detector = new window.FaceDetector({ maxDetectedFaces: 1, fastMode: true });
+    } catch {
+      return;
+    }
+
+    const detect = async () => {
+      if (cancelled) return;
+      const video = videoRef.current;
+      if (video && video.readyState >= 2 && video.videoWidth > 0) {
+        try {
+          const faces = await detector.detect(video);
+          if (!cancelled && faces.length > 0) {
+            const { boundingBox: b } = faces[0];
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            // Normalized offset of face center from frame center (-0.5 to 0.5)
+            const fx = (b.x + b.width / 2) / vw - 0.5;
+            const fy = (b.y + b.height / 2) / vh - 0.5;
+            // Zoom so face height is ~35% of the frame; clamped to 1x–2.5x
+            const zoom = Math.max(1, Math.min(2.5, 0.35 / Math.max(b.height / vh, 0.05)));
+            if (videoRef.current && !cancelled) {
+              // translate runs before scale/mirror in CSS, so we work in original video coords
+              videoRef.current.style.transform =
+                `scaleX(-1) scale(${zoom.toFixed(2)}) translate(${(-fx * 100).toFixed(1)}%, ${(-fy * 100).toFixed(1)}%)`;
+            }
+          }
+        } catch { /* skip frame */ }
+      }
+      if (!cancelled) {
+        timerId = setTimeout(() => {
+          if (!cancelled) rafId = requestAnimationFrame(detect);
+        }, 350);
+      }
+    };
+
+    rafId = requestAnimationFrame(detect);
+
+    return () => {
+      cancelled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      if (timerId) clearTimeout(timerId);
+      // Restore default mirror transform so CSS class takes over again
+      if (videoRef.current) {
+        videoRef.current.style.transform = '';
+      }
+    };
+  }, [phase, isAlreadySubmitted]);
 
   const handleStartClick = () => {
     setCountdown(3);
