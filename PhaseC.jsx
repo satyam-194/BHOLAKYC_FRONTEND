@@ -540,9 +540,10 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
         setKycSubmitAllowed(false);
         const streamToRecord = liveStreamRef.current;
         const picked = pickRecorderMimeType();
+        const recorderOpts = { videoBitsPerSecond: 1500000, audioBitsPerSecond: 64000 };
         const mr = picked
-          ? new MediaRecorder(streamToRecord, { mimeType: picked })
-          : new MediaRecorder(streamToRecord);
+          ? new MediaRecorder(streamToRecord, { mimeType: picked, ...recorderOpts })
+          : new MediaRecorder(streamToRecord, recorderOpts);
         const outType = mr.mimeType || picked || 'video/webm';
         recordedMimeRef.current = outType;
 
@@ -695,6 +696,14 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
       const blob = new Blob(recordedChunksRef.current, {
         type: recordedMimeRef.current || 'video/webm',
       });
+
+      const MAX_ALLOWED = 180 * 1024 * 1024;
+      if (blob.size > MAX_ALLOWED) {
+        setUploadError('Video is too large to upload. Please retake the recording.');
+        showToast('Video file is too large. Tap Retake and record again — speak clearly at a normal pace.', 'error');
+        setIsProcessing(false);
+        return;
+      }
 
       if (parentSubmit) {
         await parentSubmit(blob);
