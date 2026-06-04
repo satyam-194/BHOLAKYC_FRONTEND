@@ -21,7 +21,10 @@ export function getStorageBase() {
   const fromEnv = import.meta.env.VITE_STORAGE_BASE_URL?.trim();
   if (fromEnv) return fromEnv.replace(/\/$/, '');
   if (import.meta.env.DEV) return getApiBase();
-  return 'https://coinora.in';
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return 'https://www.coinora.in';
 }
 
 export const API_BASE = getApiBase();
