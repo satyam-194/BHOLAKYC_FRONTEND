@@ -2316,18 +2316,19 @@ const AdminDashboard = () => {
     }
   };
 
-  const downloadFile = async (path, filename) => {
-    if (!path) {
+  const downloadFile = async (filePath, filename) => {
+    if (!filePath) {
       showToast("File not found.", "red");
       return;
     }
-    const url = mediaUrl(path);
-    const outName = preferredDownloadName(path, filename);
+    const outName = preferredDownloadName(filePath, filename);
     try {
-      const res = await fetch(url, { credentials: "include", mode: "cors" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      const res = await authClient.get("/api/admin/download", {
+        params: { path: filePath },
+        responseType: "blob",
+        timeout: 120000,
+      });
+      const blobUrl = URL.createObjectURL(res.data);
       const a = document.createElement("a");
       a.href = blobUrl;
       a.download = outName;
