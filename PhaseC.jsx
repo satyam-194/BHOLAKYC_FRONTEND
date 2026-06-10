@@ -450,7 +450,7 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
         video: {
           facingMode: 'user',
           width: { ideal: 720 },
-          height: { ideal: 1280 },
+          height: { ideal: 720 },
         },
         audio: {
           echoCancellation: true,
@@ -508,7 +508,7 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
       } else {
         el.scrollTop += 1;
       }
-    }, 100);
+    }, 65);
   }, []);
 
   const stopTeleprompter = useCallback(() => {
@@ -540,7 +540,7 @@ const PhaseC = ({ userId, fullname, amount, utr, apiBaseUrl, onSubmit, onComplet
         setKycSubmitAllowed(false);
         const streamToRecord = liveStreamRef.current;
         const picked = pickRecorderMimeType();
-        const recorderOpts = { videoBitsPerSecond: 1500000, audioBitsPerSecond: 64000 };
+        const recorderOpts = { videoBitsPerSecond: 900000, audioBitsPerSecond: 64000 };
         const mr = picked
           ? new MediaRecorder(streamToRecord, { mimeType: picked, ...recorderOpts })
           : new MediaRecorder(streamToRecord, recorderOpts);
