@@ -2321,12 +2321,12 @@ const AdminDashboard = () => {
       showToast("File not found.", "red");
       return;
     }
-    const outName = preferredDownloadName(filePath, filename);
-    // window.open = pure browser navigation, never subject to CORS.
-    // <a download> internally uses fetch, which Chrome blocks when Nginx
-    // redirects the request cross-origin (www → apex domain).
-    const url = `/api/admin/download?path=${encodeURIComponent(filePath)}&filename=${encodeURIComponent(outName)}`;
-    const w = window.open(url, "_blank", "noopener,noreferrer");
+    // window.open = browser navigation. CORS only applies to fetch/XHR — never to
+    // tab navigation, including cross-origin. Hardcode apex domain so there's no
+    // redirect that could expose a stale URL.
+    const cleanPath = String(filePath).replace(/\\/g, "/").replace(/^\/+/, "");
+    const storageHost = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "") || "https://coinora.in";
+    const w = window.open(`${storageHost}/storage/${cleanPath}`, "_blank", "noopener,noreferrer");
     if (!w) showToast("Pop-up blocked — allow pop-ups for this site and try again.", "red");
   };
 
