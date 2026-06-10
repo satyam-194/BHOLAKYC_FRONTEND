@@ -2316,30 +2316,23 @@ const AdminDashboard = () => {
     }
   };
 
-  const downloadFile = async (filePath, filename) => {
+  const downloadFile = (filePath, filename) => {
     if (!filePath) {
       showToast("File not found.", "red");
       return;
     }
     const outName = preferredDownloadName(filePath, filename);
-    try {
-      const res = await authClient.get("/api/admin/download", {
-        params: { path: filePath },
-        responseType: "blob",
-        timeout: 120000,
-      });
-      const blobUrl = URL.createObjectURL(res.data);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = outName;
-      a.rel = "noopener noreferrer";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      showToast("Download failed. Check your connection or try again.", "red");
-    }
+    // Use direct anchor navigation — not subject to CORS restrictions.
+    // fetch/XHR breaks when www.coinora.in and coinora.in are treated as
+    // different origins and Nginx serves /storage/ without CORS headers.
+    const url = `${API_BASE}/api/admin/download?path=${encodeURIComponent(filePath)}`;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = outName;
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const stats = {
