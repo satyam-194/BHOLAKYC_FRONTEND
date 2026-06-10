@@ -2322,16 +2322,12 @@ const AdminDashboard = () => {
       return;
     }
     const outName = preferredDownloadName(filePath, filename);
-    // Relative URL — always same-origin regardless of www vs apex domain.
-    // Avoids CORS entirely: no cross-origin fetch, no redirect to storage.
-    const url = `/api/admin/download?path=${encodeURIComponent(filePath)}`;
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = outName;
-    a.rel = "noopener noreferrer";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // window.open = pure browser navigation, never subject to CORS.
+    // <a download> internally uses fetch, which Chrome blocks when Nginx
+    // redirects the request cross-origin (www → apex domain).
+    const url = `/api/admin/download?path=${encodeURIComponent(filePath)}&filename=${encodeURIComponent(outName)}`;
+    const w = window.open(url, "_blank", "noopener,noreferrer");
+    if (!w) showToast("Pop-up blocked — allow pop-ups for this site and try again.", "red");
   };
 
   const stats = {
