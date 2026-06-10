@@ -2322,10 +2322,9 @@ const AdminDashboard = () => {
       return;
     }
     const outName = preferredDownloadName(filePath, filename);
-    // Use direct anchor navigation — not subject to CORS restrictions.
-    // fetch/XHR breaks when www.coinora.in and coinora.in are treated as
-    // different origins and Nginx serves /storage/ without CORS headers.
-    const url = `${API_BASE}/api/admin/download?path=${encodeURIComponent(filePath)}`;
+    // Relative URL — always same-origin regardless of www vs apex domain.
+    // Avoids CORS entirely: no cross-origin fetch, no redirect to storage.
+    const url = `/api/admin/download?path=${encodeURIComponent(filePath)}`;
     const a = document.createElement("a");
     a.href = url;
     a.download = outName;
