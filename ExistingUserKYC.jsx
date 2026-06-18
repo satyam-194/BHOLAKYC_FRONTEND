@@ -176,6 +176,7 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
+  const [videoKey, setVideoKey] = useState(0);
 
   const cleanPhone = () => phone.trim().replace(/\D/g, '').slice(0, 10);
 
@@ -206,8 +207,9 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
   const proceedToVideo = () => {
     if (!utr.trim()) { setError('UTR reference number is required.'); return; }
     setError('');
-    // Clear any cached PhaseC submission for this user so they always record fresh
+    // Clear cached PhaseC state so it always starts fresh (camera + isAlreadySubmitted)
     if (userId) localStorage.removeItem(`kyc_phase_c_${userId}`);
+    setVideoKey((k) => k + 1); // force PhaseC to fully remount
     setStep('video');
   };
 
@@ -263,6 +265,7 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
   if (step === 'video') {
     return (
       <PhaseC
+        key={videoKey}
         userId={userId}
         fullname={userInfo?.name}
         amount={amount}
