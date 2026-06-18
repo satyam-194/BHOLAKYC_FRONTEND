@@ -151,6 +151,15 @@ const CSS = `
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 20px;
 }
+.eu-success-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  color: #0f172a; text-align: center; margin-bottom: 8px;
+}
+.eu-success-sub {
+  font-size: 13.5px; color: #64748b;
+  text-align: center; line-height: 1.6; margin-bottom: 28px;
+}
 
 @media (max-width: 480px) {
   .eu-card { padding: 28px 20px 24px; }
@@ -197,10 +206,14 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
   const proceedToVideo = () => {
     if (!utr.trim()) { setError('UTR reference number is required.'); return; }
     setError('');
+    // Clear any cached PhaseC submission for this user so they always record fresh
+    if (userId) localStorage.removeItem(`kyc_phase_c_${userId}`);
     setStep('video');
   };
 
   const handleVideoSubmit = async (blob) => {
+    if (!blob) throw new Error('No video recorded. Please record your video declaration first.');
+
     const fd = new FormData();
     fd.append('video',            blob, 'consent_video.webm');
     fd.append('utr_reference_no', utr.trim());
@@ -210,9 +223,42 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
       method: 'POST',
       body: fd,
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Video upload failed.');
+
+    let data = {};
+    try { data = await res.json(); } catch { /* non-JSON response */ }
+    if (!res.ok) throw new Error(data.error || `Upload failed (${res.status})`);
+
+    // Navigate to success screen after upload
+    setStep('done');
   };
+
+  if (step === 'done') {
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="eu-root">
+          <div className="eu-card">
+            <div className="eu-logo">
+              <div className="eu-logo-dot" />
+              <div className="eu-logo-text">COINORA <span>KYC</span></div>
+            </div>
+            <div className="eu-success-icon">
+              <svg width="28" height="28" fill="none" stroke="#16a34a" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p className="eu-success-title">Video Submitted!</p>
+            <p className="eu-success-sub">
+              Your video declaration has been uploaded successfully. Our team will review it shortly. Your profile has been updated.
+            </p>
+            <button className="eu-btn-primary" onClick={onBack}>
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (step === 'video') {
     return (
