@@ -840,6 +840,8 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
 .abtn.soft-red:hover { background:#fecaca; }
 .abtn.hard-red  { background:linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; box-shadow:0 3px 10px rgba(220,38,38,0.3); }
 .abtn.hard-red:hover { opacity:0.9; box-shadow:0 5px 14px rgba(220,38,38,0.38); }
+.abtn.blue      { background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; box-shadow:0 3px 10px rgba(37,99,235,0.3); }
+.abtn.blue:hover { opacity:0.9; box-shadow:0 5px 14px rgba(37,99,235,0.38); }
 .a-div { height:1px; background:var(--border); margin:10px 0; }
 
 .d-doc-overlay {
@@ -934,6 +936,42 @@ table.d-table { width: 100%; border-collapse: collapse; min-width: 720px; }
   font-size:13px; font-weight:700; color:#fff; transition:background 0.15s;
 }
 .d-modal-ok:hover { background:#b91c1c; }
+
+.d-modal-wide {
+  max-width:560px; max-height:82vh;
+  display:flex; flex-direction:column;
+}
+.d-modal-body { overflow-y:auto; flex:1; margin:0 -4px; padding:0 4px; }
+.d-edit-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px 16px; margin-bottom:16px;
+}
+.d-edit-field label {
+  display:block; font-size:11.5px; font-weight:600;
+  color:var(--slate); margin-bottom:5px;
+}
+.d-edit-field input, .d-edit-field textarea {
+  width:100%; padding:9px 11px;
+  border:1.5px solid var(--border); border-radius:9px;
+  font-family:var(--font); font-size:13px; color:var(--navy); background:#fff;
+}
+.d-edit-field textarea { min-height:68px; resize:vertical; }
+.d-edit-field input:focus, .d-edit-field textarea:focus {
+  outline:none; border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(37,99,235,0.12);
+}
+.d-edit-full { grid-column:1 / -1; }
+.d-modal-save {
+  flex:1; padding:12px; border:none; border-radius:10px;
+  background:var(--blue); cursor:pointer; font-family:var(--font);
+  font-size:13px; font-weight:700; color:#fff; transition:background 0.15s;
+}
+.d-modal-save:hover:not(:disabled) { background:var(--blue-dk); }
+.d-modal-save:disabled { opacity:0.6; cursor:default; }
+@media (max-width:600px) {
+  .d-edit-grid { grid-template-columns:1fr; }
+  .d-modal-wide { max-width:100%; }
+}
 
 .d-toast {
   position:fixed; bottom:24px; right:24px; z-index:600;
@@ -2173,6 +2211,9 @@ const AdminDashboard = () => {
   const [toast, setToast] = useState(null);
   const [sessionWarn, setSessionWarn] = useState(false);
   const [docLightboxIndex, setDocLightboxIndex] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({});
+  const [editSaving, setEditSaving] = useState(false);
   const sessionTimer = useRef(null);
 
   const documentSlots = useMemo(
@@ -2313,6 +2354,42 @@ const AdminDashboard = () => {
       }
     } catch {
       showToast("Delete failed. Refresh and try again.", "red");
+    }
+  };
+
+  const openEdit = () => {
+    setEditForm({
+      buyer_full_name:  selected.buyer_full_name  || '',
+      buyer_mobile:     selected.buyer_mobile     || '',
+      buyer_email:      selected.buyer_email      || '',
+      buyer_aadhaar_no: selected.buyer_aadhaar_no || '',
+      buyer_pan_no:     selected.buyer_pan_no     || '',
+      buyer_address:    selected.buyer_address    || '',
+      utr_reference_no: selected.utr_reference_no || '',
+      amount:           selected.amount           || '',
+      q1: selected.q1 || '',
+      q2: selected.q2 || '',
+      q3: selected.q3 || '',
+      q4: selected.q4 || '',
+      q5: selected.q5 || '',
+    });
+    setEditMode(true);
+  };
+
+  const saveUserEdits = async () => {
+    setEditSaving(true);
+    try {
+      const res = await authClient.put(`/api/admin/update-user/${selected.id}`, editForm);
+      if (res.data.success) {
+        showToast('User details updated.', 'green');
+        setSelected((prev) => prev ? { ...prev, ...editForm } : prev);
+        setUsers((prev) => prev.map((u) => u.id === selected.id ? { ...u, ...editForm } : u));
+        setEditMode(false);
+      }
+    } catch {
+      showToast('Could not save changes. Try again.', 'red');
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -2858,6 +2935,14 @@ const AdminDashboard = () => {
                   <div className="d-acard">
                     <p className="d-atitle">Actions</p>
 
+                    <button className="abtn blue" onClick={openEdit}>
+                      <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Edit Details
+                    </button>
+                    <div className="a-div" />
+
                     {selected.proof_status !== "Not Required" &&
                       selected.proof_status !== "Approved" &&
                       selected.proof_status !== "Rejected" && (
@@ -2970,6 +3055,71 @@ const AdminDashboard = () => {
           onClose={() => setDocLightboxIndex(null)}
           onSelectIndex={setDocLightboxIndex}
         />
+      )}
+
+      {editMode && selected && (
+        <div className="d-overlay" onClick={() => setEditMode(false)}>
+          <div className="d-modal d-modal-wide" onClick={(e) => e.stopPropagation()}>
+            <p className="d-modal-title">Edit User Details</p>
+            <p className="d-modal-desc" style={{ marginBottom: 16 }}>
+              Text fields only — document files are not affected.
+            </p>
+            <div className="d-modal-body">
+              <div className="d-edit-grid">
+                {[
+                  ["buyer_full_name",  "Full Name"],
+                  ["buyer_mobile",     "Mobile"],
+                  ["buyer_email",      "Email"],
+                  ["buyer_aadhaar_no", "Aadhaar Number"],
+                  ["buyer_pan_no",     "PAN Number"],
+                  ["utr_reference_no", "UTR Reference"],
+                  ["amount",           "Amount (₹)"],
+                  ["q1", "Q1 Answer"],
+                  ["q2", "Q2 Answer"],
+                  ["q3", "Q3 Answer"],
+                  ["q4", "Q4 Answer"],
+                  ["q5", "Purpose (Q5)"],
+                ].map(([field, label]) => (
+                  <div key={field} className="d-edit-field">
+                    <label>{label}</label>
+                    <input
+                      type="text"
+                      value={editForm[field] || ""}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, [field]: e.target.value }))
+                      }
+                    />
+                  </div>
+                ))}
+                <div className="d-edit-field d-edit-full">
+                  <label>Address</label>
+                  <textarea
+                    value={editForm.buyer_address || ""}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, buyer_address: e.target.value }))
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="d-modal-btns">
+              <button
+                className="d-modal-cancel"
+                onClick={() => setEditMode(false)}
+                disabled={editSaving}
+              >
+                Cancel
+              </button>
+              <button
+                className="d-modal-save"
+                onClick={saveUserEdits}
+                disabled={editSaving}
+              >
+                {editSaving ? "Saving…" : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {confirm && (

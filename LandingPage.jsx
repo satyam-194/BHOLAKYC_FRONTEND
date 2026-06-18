@@ -484,7 +484,7 @@ const useInView = (ref) => {
 };
 
 /* ─────────────────────── COMPONENT ─────────────────────── */
-const LandingPage = ({ onGetStarted }) => {
+const LandingPage = ({ onGetStarted, onExistingUser }) => {
   const [scrolled, setScrolled] = useState(false);
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef);
@@ -600,11 +600,11 @@ const LandingPage = ({ onGetStarted }) => {
               </svg>
             </span>
           </button>
-          <button className="lp-btn-outline" onClick={onGetStarted}>
+          <button className="lp-btn-outline" onClick={onExistingUser}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Takes under 5 mins
+            Already Registered?
           </button>
         </motion.div>
 
