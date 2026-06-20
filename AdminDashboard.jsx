@@ -2896,15 +2896,16 @@ const AdminDashboard = () => {
                       Consent Video
                     </p>
                     {selected.path_video_verification ? (
-                      <video
-                        controls
-                        className="d-video"
-                        src={mediaUrl(selected.path_video_verification)}
-                      />
+                      <video controls className="d-video" src={mediaUrl(selected.path_video_verification)} />
+                    ) : selected.transactions && selected.transactions.length > 0 && selected.transactions[selected.transactions.length - 1].path_video_verification ? (
+                      <video controls className="d-video" src={mediaUrl(selected.transactions[selected.transactions.length - 1].path_video_verification)} />
                     ) : (
-                      <div className="d-video-empty">
-                        Video not uploaded yet
-                      </div>
+                      <div className="d-video-empty">Video not uploaded yet</div>
+                    )}
+                    {selected.transactions && selected.transactions.length > 1 && (
+                      <p style={{fontSize:11, color:'#94a3b8', marginTop:6}}>
+                        Showing latest transaction video. Earlier videos available via Transaction History.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -2931,6 +2932,54 @@ const AdminDashboard = () => {
                       <span className="d-amt">₹{selected.amount || "0"}</span>
                     </div>
                   </div>
+
+                  {selected.transactions && selected.transactions.length > 0 && (
+                    <div className="d-icard">
+                      <p className="sec-label">Transaction History ({selected.transactions.length})</p>
+                      {[...selected.transactions].reverse().map((t, i) => (
+                        <div key={t.txn_ref || i} style={{borderBottom:'1px solid #f1f5f9', paddingBottom:12, marginBottom:12}}>
+                          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6}}>
+                            <span style={{fontWeight:700, fontSize:12.5, color:'#1e293b'}}>{t.txn_ref || `Txn ${i+1}`}</span>
+                            <span className={`badge ${t.admin_status === 'Verified' ? 'badge-green' : t.admin_status === 'Rejected' ? 'badge-red' : 'badge-amber'}`}>
+                              {t.admin_status || 'Pending'}
+                            </span>
+                          </div>
+                          <div className="d-irow">
+                            <span className="d-ikey">UTR</span>
+                            <span className="d-ival">{t.utr_reference_no || '—'}</span>
+                          </div>
+                          <div className="d-irow">
+                            <span className="d-ikey">Amount</span>
+                            <span className="d-ival" style={{color:'#2563eb', fontWeight:700}}>₹{t.amount || '—'}</span>
+                          </div>
+                          <div className="d-irow">
+                            <span className="d-ikey">Date</span>
+                            <span className="d-ival">{t.execution_date ? new Date(t.execution_date).toLocaleDateString() : '—'}</span>
+                          </div>
+                          <div style={{display:'flex', gap:6, flexWrap:'wrap', marginTop:8}}>
+                            {t.pdf_path && (
+                              <button className="dl-btn blue" style={{fontSize:11, height:28, padding:'0 10px'}}
+                                onClick={() => downloadFile(t.pdf_path, `${t.txn_ref}_kyc.pdf`)}>
+                                KYC PDF
+                              </button>
+                            )}
+                            {t.indemnity_pdf_path && (
+                              <button className="dl-btn blue" style={{fontSize:11, height:28, padding:'0 10px'}}
+                                onClick={() => downloadFile(t.indemnity_pdf_path, `${t.txn_ref}_indemnity.pdf`)}>
+                                Indemnity
+                              </button>
+                            )}
+                            {t.path_video_verification && (
+                              <button className="dl-btn dark" style={{fontSize:11, height:28, padding:'0 10px'}}
+                                onClick={() => downloadFile(t.path_video_verification, `${t.txn_ref}_video`)}>
+                                Video
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="d-acard">
                     <p className="d-atitle">Actions</p>
