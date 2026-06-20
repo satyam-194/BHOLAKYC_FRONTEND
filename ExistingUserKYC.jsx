@@ -145,6 +145,35 @@ const CSS = `
   height: 1px; background: #f1f5f9; margin: 20px 0;
 }
 
+.eu-txn-history { margin-bottom: 22px; }
+.eu-txn-history-label {
+  font-size: 11px; font-weight: 600; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.eu-txn-item {
+  background: #f8fafc; border: 1px solid #e4e8f0;
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px;
+}
+.eu-txn-row { display: flex; flex-direction: column; gap: 2px; }
+.eu-txn-row-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.eu-txn-row-value { font-size: 13px; color: #1e293b; font-weight: 600; }
+.eu-txn-status-chip {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.eu-txn-status-chip.pending  { background: #fef3c7; color: #d97706; }
+.eu-txn-status-chip.verified { background: #dcfce7; color: #16a34a; }
+.eu-txn-status-chip.rejected { background: #fee2e2; color: #dc2626; }
+
+.eu-new-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; color: #2563eb;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 20px; padding: 3px 10px; margin-bottom: 14px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
 .eu-success-icon {
   width: 64px; height: 64px; border-radius: 50%;
   background: #dcfce7;
@@ -168,15 +197,16 @@ const CSS = `
 `;
 
 const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
-  const [step, setStep]         = useState('phone');
-  const [phone, setPhone]       = useState('');
-  const [utr, setUtr]           = useState('');
-  const [amount, setAmount]     = useState('');
-  const [userId, setUserId]     = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
-  const [videoKey, setVideoKey] = useState(0);
+  const [step, setStep]                 = useState('phone');
+  const [phone, setPhone]               = useState('');
+  const [utr, setUtr]                   = useState('');
+  const [amount, setAmount]             = useState('');
+  const [userId, setUserId]             = useState(null);
+  const [userInfo, setUserInfo]         = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState('');
+  const [videoKey, setVideoKey]         = useState(0);
 
   const cleanPhone = () => phone.trim().replace(/\D/g, '').slice(0, 10);
 
@@ -196,6 +226,7 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
       setUserId(data.id);
       setUserInfo({ name: data.name, amount: data.amount });
       setAmount(data.amount || '');
+      setTransactions(data.transactions || []);
       setStep('utr');
     } catch {
       setError('Lookup failed. Check your connection and try again.');
@@ -230,7 +261,7 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
     try { data = await res.json(); } catch { /* non-JSON response */ }
     if (!res.ok) throw new Error(data.error || `Upload failed (${res.status})`);
 
-    // Navigate to success screen after upload
+    if (data.transactions) setTransactions(data.transactions);
     setStep('done');
   };
 
@@ -251,8 +282,37 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
             </div>
             <p className="eu-success-title">Video Submitted!</p>
             <p className="eu-success-sub">
-              Your video declaration has been uploaded successfully. Our team will review it shortly. Your profile has been updated.
+              Your video declaration has been uploaded and a new KYC record has been created. All previous submissions remain intact.
             </p>
+
+            {transactions.length > 0 && (
+              <div className="eu-txn-history">
+                <p className="eu-txn-history-label">All Submissions ({transactions.length})</p>
+                {[...transactions].reverse().map((t, i) => (
+                  <div key={i} className="eu-txn-item">
+                    <div className="eu-txn-row">
+                      <span className="eu-txn-row-label">Ref</span>
+                      <span className="eu-txn-row-value">{t.txn_ref || '—'}</span>
+                    </div>
+                    <div className="eu-txn-row">
+                      <span className="eu-txn-row-label">Status</span>
+                      <span className={`eu-txn-status-chip ${(t.admin_status || 'pending').toLowerCase()}`}>
+                        {t.admin_status || 'Pending'}
+                      </span>
+                    </div>
+                    <div className="eu-txn-row">
+                      <span className="eu-txn-row-label">UTR</span>
+                      <span className="eu-txn-row-value">{t.utr_reference_no || '—'}</span>
+                    </div>
+                    <div className="eu-txn-row">
+                      <span className="eu-txn-row-label">Amount</span>
+                      <span className="eu-txn-row-value">₹{t.amount || '—'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <button className="eu-btn-primary" onClick={onBack}>
               Back to Home
             </button>
@@ -334,6 +394,40 @@ const ExistingUserKYC = ({ apiBaseUrl, onBack }) => {
                   <div>
                     <div className="eu-found-name">{userInfo.name || 'User found'}</div>
                     <div className="eu-found-sub">Identity verified</div>
+                  </div>
+                </div>
+              )}
+
+              {transactions.length > 0 && (
+                <div className="eu-txn-history">
+                  <p className="eu-txn-history-label">Previous Submissions ({transactions.length})</p>
+                  {[...transactions].reverse().map((t, i) => (
+                    <div key={i} className="eu-txn-item">
+                      <div className="eu-txn-row">
+                        <span className="eu-txn-row-label">Ref</span>
+                        <span className="eu-txn-row-value">{t.txn_ref || '—'}</span>
+                      </div>
+                      <div className="eu-txn-row">
+                        <span className="eu-txn-row-label">Status</span>
+                        <span className={`eu-txn-status-chip ${(t.admin_status || 'pending').toLowerCase()}`}>
+                          {t.admin_status || 'Pending'}
+                        </span>
+                      </div>
+                      <div className="eu-txn-row">
+                        <span className="eu-txn-row-label">UTR</span>
+                        <span className="eu-txn-row-value">{t.utr_reference_no || '—'}</span>
+                      </div>
+                      <div className="eu-txn-row">
+                        <span className="eu-txn-row-label">Amount</span>
+                        <span className="eu-txn-row-value">₹{t.amount || '—'}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="eu-new-badge">
+                    <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
+                    </svg>
+                    New submission below
                   </div>
                 </div>
               )}
